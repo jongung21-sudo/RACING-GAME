@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEON CIRCUIT - 2D Arcade Racing Game</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Main Game Rendering Canvas -->
+        <canvas id="game-canvas" width="1280" height="720"></canvas>
+
+        <!-- Audio Mute / Unmute Toggle Button -->
+        <button id="btn-mute" class="audio-toggle-btn">🔊 사운드: ON</button>
+
+        <!-- Winner In-Game Banner -->
+        <div id="winner-banner" class="winner-banner hidden">🏁 1위 완주!</div>
+
+        <!-- ================= MAIN MENU SCREEN ================= -->
+        <div id="menu-screen" class="ui-overlay interactive">
+            <div class="menu-title-container">
+                <h1 class="menu-title">NEON CIRCUIT</h1>
+                <div class="menu-subtitle">아케이드 2D 레이싱 그랑프리</div>
+            </div>
+
+            <div class="menu-actions">
+                <button id="btn-start-race" class="arcade-btn btn-primary">레이스 시작 (START)</button>
+                <button id="btn-how-to-play" class="arcade-btn">조작법 안내 (HELP)</button>
+            </div>
+        </div>
+
+        <!-- ================= HOW TO PLAY MODAL ================= -->
+        <div id="how-to-play-modal" class="ui-overlay modal-backdrop interactive hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>조작 방법 & 레이싱 팁</h2>
+                    <button id="btn-close-modal" class="close-btn">&times;</button>
+                </div>
+
+                <div class="controls-grid">
+                    <div class="control-item">
+                        <span class="key-badge">W / &uarr;</span>
+                        <span class="control-desc">가속 (전진)</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key-badge">S / &darr;</span>
+                        <span class="control-desc">브레이크 / 후진</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key-badge">A / &larr;</span>
+                        <span class="control-desc">좌회전</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key-badge">D / &rarr;</span>
+                        <span class="control-desc">우회전</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key-badge">SPACE</span>
+                        <span class="control-desc">핸드브레이크 / 드리프트</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key-badge">R</span>
+                        <span class="control-desc">트랙 중앙 복귀 리셋</span>
+                    </div>
+                </div>
+
+                <div class="racing-tips">
+                    <p>🏁 <strong>승리를 위한 주행 팁:</strong></p>
+                    <p>&bull; 코너 진입 시 <strong>스페이스바(SPACE)</strong>를 누르면 화려한 고속 드리프트가 가능합니다.</p>
+                    <p>&bull; <strong>잔디(오프로드)</strong>로 주행하면 속도가 35%로 급감하니 주의하세요!</p>
+                    <p>&bull; 외곽 <strong>방호벽</strong>에 부딪히면 감속되므로 트랙 연석을 따라 주행하세요.</p>
+                    <p>&bull; 총 3바퀴(3 Laps)를 먼저 완주하는 차량이 1등 우승을 차지합니다!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= IN-GAME HUD SCREEN ================= -->
+        <div id="hud-screen" class="ui-overlay hidden">
+            <!-- Top Left: Position & Lap Counter -->
+            <div class="hud-panel hud-top-left">
+                <div class="hud-stat-box">
+                    <span class="hud-label">순위 (POS)</span>
+                    <span id="hud-position-val" class="hud-value-large hud-pos-accent">1 / 6</span>
+                </div>
+                <div class="hud-stat-box">
+                    <span class="hud-label">랩 (LAP)</span>
+                    <span id="hud-lap-val" class="hud-value-large">1 / 3</span>
+                </div>
+            </div>
+
+            <!-- Top Center: Race Time & Best Lap -->
+            <div class="hud-panel hud-top-center">
+                <div class="hud-stat-box">
+                    <span class="hud-label">경기 시간 (TIME)</span>
+                    <span id="hud-time-val" class="hud-time-val">00:00.00</span>
+                </div>
+                <div class="hud-stat-box">
+                    <span class="hud-label">최고 랩 (BEST)</span>
+                    <span id="hud-best-val" class="hud-best-val">--:--.--</span>
+                </div>
+            </div>
+
+            <!-- Top Right: Live Mini-Map -->
+            <div class="hud-top-right">
+                <canvas id="minimap-canvas" width="160" height="110"></canvas>
+            </div>
+
+            <!-- Bottom Left: Speedometer Gauge -->
+            <div class="hud-panel hud-bottom-left">
+                <span class="hud-label">속도 (SPEED)</span>
+                <div class="speed-display">
+                    <span id="hud-speed-val" class="speed-number">0</span>
+                    <span class="speed-unit">KM/H</span>
+                </div>
+                <div class="speed-bar-container">
+                    <div id="hud-speed-bar" class="speed-bar"></div>
+                </div>
+            </div>
+
+            <!-- Touch Controls for Mobile/Tablets -->
+            <div id="touch-controls">
+                <div class="touch-cluster">
+                    <div id="touch-left" class="touch-btn">&larr;</div>
+                    <div id="touch-right" class="touch-btn">&rarr;</div>
+                </div>
+                <div class="touch-cluster">
+                    <div id="touch-drift" class="touch-btn btn-drift">DRIFT</div>
+                    <div id="touch-down" class="touch-btn">&darr;</div>
+                    <div id="touch-up" class="touch-btn">&uarr;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= START COUNTDOWN ================= -->
+        <div id="countdown-overlay" class="ui-overlay hidden">
+            <div id="countdown-number" class="countdown-text">3</div>
+        </div>
+
+        <!-- ================= RACE RESULTS SCREEN ================= -->
+        <div id="results-screen" class="ui-overlay interactive hidden">
+            <div class="results-card">
+                <div class="results-header">
+                    <div id="result-winner-badge" class="result-winner-badge">🏆 1위 우승: PLAYER 1</div>
+                    <h2 id="result-rank" class="result-rank-title rank-1">내 최종 순위: 1위</h2>
+                </div>
+
+                <div class="results-stats-row">
+                    <div class="results-stat">
+                        <span class="hud-label">총 소요 시간</span>
+                        <span id="result-total-time" class="hud-time-val">01:03.45</span>
+                    </div>
+                    <div class="results-stat">
+                        <span class="hud-label">최고 랩 기록</span>
+                        <span id="result-best-lap" class="hud-best-val">00:20.15</span>
+                    </div>
+                </div>
+
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th class="col-pos">순위</th>
+                            <th>드라이버</th>
+                            <th class="col-best">최고 랩</th>
+                            <th class="col-time">총 기록</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-table-body">
+                        <!-- Populated dynamically via JS -->
+                    </tbody>
+                </table>
+
+                <div class="results-actions">
+                    <button id="btn-race-again" class="arcade-btn btn-primary">다시 하기 (RETRY)</button>
+                    <button id="btn-main-menu" class="arcade-btn">메인 메뉴 (MENU)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modular Game Scripts in Dependency Order -->
+    <script src="js/audio.js"></script>
+    <script src="js/track.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/camera.js"></script>
+    <script src="js/car.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>

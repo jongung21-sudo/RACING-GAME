@@ -1,0 +1,739 @@
+/* ==========================================================================
+   NEON CIRCUIT - Arcade 2D Racing Game Stylesheet
+   ========================================================================== */
+
+:root {
+    --bg-color: #0b0c10;
+    --primary-neon: #00f0ff;
+    --primary-red: #ff204e;
+    --accent-yellow: #ffd600;
+    --accent-green: #00e676;
+    --accent-purple: #d500f9;
+    --panel-bg: rgba(15, 20, 28, 0.88);
+    --panel-border: rgba(0, 240, 255, 0.35);
+    --text-white: #ffffff;
+    --text-dim: #94a3b8;
+    --font-heading: 'Impact', 'Arial Black', sans-serif;
+    --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    --font-mono: 'Consolas', 'Courier New', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-color);
+    font-family: var(--font-body);
+    color: var(--text-white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 16:9 Game Container with Responsive Letterbox */
+#game-container {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    background-color: #111;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(0, 240, 255, 0.15), 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* UI Overlays Base */
+.ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+.ui-overlay.hidden {
+    display: none !important;
+}
+
+.interactive {
+    pointer-events: auto;
+}
+
+/* ==========================================================================
+   MAIN MENU SCREEN
+   ========================================================================== */
+#menu-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, rgba(16, 24, 38, 0.75) 0%, rgba(5, 7, 12, 0.94) 100%);
+    backdrop-filter: blur(4px);
+}
+
+.menu-title-container {
+    text-align: center;
+    margin-bottom: 36px;
+    animation: titleFloat 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+}
+
+.menu-title {
+    font-family: var(--font-heading);
+    font-size: 82px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow:
+        0 0 10px rgba(0, 240, 255, 0.8),
+        0 0 20px rgba(0, 240, 255, 0.6),
+        0 0 40px rgba(0, 240, 255, 0.4);
+    background: linear-gradient(180deg, #ffffff 30%, #00f0ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.menu-subtitle {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: var(--primary-red);
+    text-shadow: 0 0 12px rgba(255, 32, 78, 0.6);
+    margin-top: 4px;
+}
+
+.menu-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 320px;
+}
+
+.arcade-btn {
+    position: relative;
+    padding: 16px 28px;
+    font-family: var(--font-heading);
+    font-size: 24px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, rgba(20, 30, 48, 0.9) 0%, rgba(36, 59, 85, 0.9) 100%);
+    color: #fff;
+    border: 2px solid var(--primary-neon);
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.25), inset 0 0 10px rgba(0, 240, 255, 0.2);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+
+.arcade-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    border-color: #fff;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.6), inset 0 0 15px rgba(0, 240, 255, 0.4);
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.3) 0%, rgba(36, 59, 85, 0.9) 100%);
+}
+
+.arcade-btn:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff204e 0%, #a80026 100%);
+    border-color: #ff6b8b;
+    box-shadow: 0 0 20px rgba(255, 32, 78, 0.4);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #ff3d67 0%, #c4002d 100%);
+    box-shadow: 0 0 30px rgba(255, 32, 78, 0.7);
+}
+
+.audio-toggle-btn {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: rgba(15, 20, 28, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 50;
+    pointer-events: auto;
+}
+
+.audio-toggle-btn:hover {
+    border-color: var(--primary-neon);
+    color: var(--primary-neon);
+}
+
+/* ==========================================================================
+   HOW TO PLAY MODAL
+   ========================================================================== */
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 60;
+}
+
+.modal-content {
+    width: 620px;
+    background: var(--panel-bg);
+    border: 2px solid var(--primary-neon);
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 0 40px rgba(0, 240, 255, 0.3);
+    animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+    padding-bottom: 14px;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    color: var(--primary-neon);
+    letter-spacing: 2px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #fff;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.key-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #1e293b;
+    border: 1px solid #475569;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary-neon);
+    box-shadow: 0 2px 0 #0f172a;
+}
+
+.control-desc {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.racing-tips {
+    background: rgba(0, 240, 255, 0.05);
+    border-left: 3px solid var(--primary-neon);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-dim);
+}
+
+.racing-tips strong {
+    color: var(--accent-yellow);
+}
+
+/* ==========================================================================
+   HEADS-UP DISPLAY (HUD)
+   ========================================================================== */
+#hud-screen {
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto 1fr auto;
+    width: 100%;
+    height: 100%;
+}
+
+.hud-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 12px 18px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+/* Top Left: Position & Lap */
+.hud-top-left {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    display: flex;
+    gap: 20px;
+}
+
+.hud-stat-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.hud-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.hud-value-large {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    line-height: 1;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+.hud-pos-accent {
+    color: var(--accent-yellow);
+    text-shadow: 0 0 10px rgba(255, 214, 0, 0.5);
+}
+
+/* Top Center: Timer & Best Lap */
+.hud-top-center {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    display: flex;
+    gap: 24px;
+}
+
+.hud-time-val {
+    font-family: var(--font-mono);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--primary-neon);
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+.hud-best-val {
+    font-family: var(--font-mono);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent-green);
+}
+
+/* Top Right: Mini-map */
+.hud-top-right {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+#minimap-canvas {
+    background: rgba(10, 15, 22, 0.75);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+/* Bottom Left: Speedometer Gauge */
+.hud-bottom-left {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: start;
+    align-self: end;
+    min-width: 220px;
+}
+
+.speed-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.speed-number {
+    font-family: var(--font-heading);
+    font-size: 50px;
+    line-height: 0.9;
+    color: #fff;
+    text-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+}
+
+.speed-unit {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--primary-neon);
+    letter-spacing: 1px;
+}
+
+.speed-bar-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.speed-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #00f0ff 0%, #ffd600 70%, #ff204e 100%);
+    border-radius: 4px;
+    transition: width 0.06s ease-out;
+}
+
+/* ==========================================================================
+   START COUNTDOWN OVERLAY
+   ========================================================================== */
+#countdown-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    z-index: 40;
+}
+
+.countdown-text {
+    font-family: var(--font-heading);
+    font-size: 160px;
+    letter-spacing: 4px;
+    color: #ffffff;
+    text-shadow:
+        0 0 20px rgba(0, 240, 255, 0.9),
+        0 0 50px rgba(0, 240, 255, 0.7);
+}
+
+.countdown-pop {
+    animation: popAnim 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popAnim {
+    0% { transform: scale(0.3); opacity: 0; }
+    30% { transform: scale(1.2); opacity: 1; }
+    80% { transform: scale(1.0); opacity: 1; }
+    100% { transform: scale(1.05); opacity: 0.8; }
+}
+
+.countdown-go {
+    color: var(--accent-green);
+    text-shadow:
+        0 0 25px rgba(0, 230, 118, 0.9),
+        0 0 60px rgba(0, 230, 118, 0.7);
+    animation: goAnim 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes goAnim {
+    0% { transform: scale(0.2); opacity: 0; }
+    35% { transform: scale(1.35); opacity: 1; }
+    80% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1.3); opacity: 0; }
+}
+
+/* ==========================================================================
+   RACE RESULTS SCREEN
+   ========================================================================== */
+#results-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, rgba(12, 18, 28, 0.88) 0%, rgba(5, 7, 12, 0.96) 100%);
+    backdrop-filter: blur(8px);
+}
+
+.results-card {
+    width: 680px;
+    background: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    border-radius: 14px;
+    padding: 28px 36px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.2);
+    animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* In-Game Winner Banner */
+.winner-banner {
+    position: absolute;
+    top: 24%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, rgba(255, 214, 0, 0.95) 0%, rgba(255, 109, 0, 0.95) 100%);
+    color: #111;
+    font-family: var(--font-heading);
+    font-size: 38px;
+    letter-spacing: 2px;
+    padding: 16px 42px;
+    border-radius: 12px;
+    border: 3px solid #fff;
+    box-shadow: 0 0 40px rgba(255, 214, 0, 0.8), 0 10px 30px rgba(0, 0, 0, 0.6);
+    z-index: 50;
+    pointer-events: none;
+    animation: winnerBannerPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes winnerBannerPop {
+    0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1.0); opacity: 1; }
+}
+
+/* Results Screen Header Badge */
+.result-winner-badge {
+    display: inline-block;
+    background: rgba(255, 214, 0, 0.15);
+    border: 1px solid rgba(255, 214, 0, 0.6);
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent-yellow);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 10px rgba(255, 214, 0, 0.4);
+}
+
+.results-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.result-rank-title {
+    font-family: var(--font-heading);
+    font-size: 52px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.rank-1 {
+    color: var(--accent-yellow);
+    text-shadow: 0 0 20px rgba(255, 214, 0, 0.7);
+}
+
+.rank-2 {
+    color: #e0e0e0;
+    text-shadow: 0 0 15px rgba(224, 224, 224, 0.6);
+}
+
+.rank-3 {
+    color: #cd7f32;
+    text-shadow: 0 0 15px rgba(205, 127, 50, 0.6);
+}
+
+.results-stats-row {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 20px;
+}
+
+.results-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+
+.results-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.results-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.player-row {
+    background: rgba(255, 32, 78, 0.15);
+    font-weight: 700;
+}
+
+.player-row td {
+    color: #fff;
+    border-bottom-color: rgba(255, 32, 78, 0.3);
+}
+
+.winner-row {
+    background: rgba(255, 214, 0, 0.18) !important;
+}
+
+.winner-row td {
+    color: #ffd600 !important;
+    font-weight: 800;
+}
+
+.col-pos {
+    width: 45px;
+    font-weight: 800;
+}
+
+.col-driver {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.driver-color-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.col-best, .col-time {
+    font-family: var(--font-mono);
+}
+
+.results-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.results-actions .arcade-btn {
+    flex: 1;
+    max-width: 240px;
+    font-size: 18px;
+    padding: 14px 20px;
+}
+
+/* ==========================================================================
+   TOUCH CONTROLS (Mobile / Tablet Support)
+   ========================================================================== */
+#touch-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    padding: 0 24px;
+    display: none; /* Auto-revealed on touch devices */
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 30;
+}
+
+@media (pointer: coarse) {
+    #touch-controls {
+        display: flex;
+    }
+}
+
+.touch-cluster {
+    display: flex;
+    gap: 14px;
+    pointer-events: auto;
+}
+
+.touch-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(15, 20, 28, 0.7);
+    border: 2px solid rgba(0, 240, 255, 0.5);
+    color: #fff;
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.touch-btn:active {
+    background: rgba(0, 240, 255, 0.4);
+    transform: scale(0.92);
+}
+
+.btn-drift {
+    background: rgba(255, 32, 78, 0.4);
+    border-color: var(--primary-red);
+    font-size: 13px;
+    font-weight: 800;
+}
